@@ -45,10 +45,10 @@ public class ArrayAdapter extends BaseAdapter {
             viewholder = (ViewHolder) convertView.getTag();
 
         Monumento monumento = monumentos.get(position);
-        viewholder.titulo.setText(monumento.getTitulo());
-        viewholder.link.setText(monumento.getLink());
-        viewholder.latitud.setText(String.valueOf(monumento.getLatitud()));
-        viewholder.longitud.setText(String.valueOf(monumento.getLongitud()));
+        viewholder.titulo.setText(monumento.getNombre());
+        viewholder.link.setText(monumento.getDescripcion());
+        viewholder.latitud.setText(monumento.getTipo());
+        viewholder.longitud.setText(String.valueOf(monumento.getPuntuacion()));
 
         return convertView;
     }

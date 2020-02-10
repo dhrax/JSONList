@@ -42,38 +42,53 @@ public class TareaDescargaDatos extends AsyncTask<String, Void, Void>{
             try {
                 // Conecta con la URL y obtenemos el fichero con los datos
                 URL url = new URL(Constantes.URL);
+                Log.d("DAVID", "Antes de URL Sin conexion");
                 HttpURLConnection conexion = (HttpURLConnection) url.openConnection();
+                Log.d("DAVID", "Despues de URL Recupera conexion");
+
                 // Lee el fichero de datos y genera una cadena de texto como resultado
                 BufferedReader br = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
+                Log.d("DAVID", "Se crea buffer");
                 StringBuilder sb = new StringBuilder();
                 String linea;
 
-                while ((linea = br.readLine()) != null)
+                while ((linea = br.readLine()) != null){
+                    Log.d("DAVID", linea+"\n");
                     sb.append(linea + "\n");
+                }
+
 
                 conexion.disconnect();
                 br.close();
                 resultado = sb.toString();
+                Log.d("DAVID", "Antes de crear objeto json");
+                try{
+                    jsonArray = new JSONArray(resultado);
+                }catch (Exception e) {
+                    Log.d("DAVID", e.toString());
+                    jsonArray = new JSONArray();
+                }
+                Log.d("DAVID", "Se crea objeto json");
+                Log.d("DAVID", "VALOR JSON: "+jsonArray.toString());
 
-                json = new JSONObject(resultado);
-                jsonArray = json.getJSONArray("features");
-
-                String titulo;
-                String link;
-                String coordenadas;
+                String nombre;
+                String descripcion;
+                String tipo;
+                int puntuacion;
                 Monumento monumento;
+                Log.d("DAVID", "Antes FOR punto antes de recuperar los datos");
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    titulo = jsonArray.getJSONObject(i).getJSONObject("properties").getString("title");
-                    link = jsonArray.getJSONObject(i).getJSONObject("properties").getString("link");
-                    coordenadas = jsonArray.getJSONObject(i).getJSONObject("geometry").getString("coordinates");
-                    coordenadas = coordenadas.substring(1, coordenadas.length() - 1);
-                    String latlong[] = coordenadas.split(",");
-                    monumento = new Monumento(titulo, link, Float.parseFloat(latlong[0]), Float.parseFloat(latlong[1]));
+                    nombre = jsonArray.getJSONObject(i).getString("nombre");
+                    Log.d("Dentro FOR", "Recupera datos nombre");
+                    descripcion = jsonArray.getJSONObject(i).getString("descripcion");
+                    Log.d("Dentro FOR", "Recupera datos descripcion");
+                    tipo = jsonArray.getJSONObject(i).getString("tipo");
+                    Log.d("Dentro FOR", "Recupera datos tipo");
+                    puntuacion = jsonArray.getJSONObject(i).getInt("puntuacion");
+                    Log.d("Dentro FOR", "Recupera datos puntuacion");
+
+                    monumento = new Monumento(nombre, descripcion, tipo, puntuacion);
                     Log.d("titulo", monumento.toString());
-                    /*monumento.setTitulo(titulo);
-                    monumento.setLink(link);
-                    monumento.setLatitud(Float.parseFloat(latlong[0]));
-                    monumento.setLongitud(Float.parseFloat(latlong[1]));*/
 
                     MainActivity.listaMonumentos.add(monumento);
                 }
